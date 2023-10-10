@@ -15,6 +15,19 @@ public class OddRepository : IOddRepository
 
     public Match Patch(int MatchId, int TeamId, string BetValue)
     {
-        throw new NotImplementedException();
+        string betValueConverted = BetValue.Replace(',', '.');
+        decimal decimalBetValue = decimal.Parse(betValueConverted, CultureInfo.InvariantCulture);
+        
+        var match = _context.Matches.First(m => m.MatchId == MatchId);
+
+        if (match.MatchTeamAId != TeamId && match.MatchTeamBId != TeamId)
+        {
+            throw new System.Exception("Team is not in this match");
+        }
+        
+        if (match.MatchTeamAId == TeamId) match.MatchTeamAValue += decimalBetValue;
+        else match.MatchTeamBValue += decimalBetValue;
+
+        return match;
     }
 }
